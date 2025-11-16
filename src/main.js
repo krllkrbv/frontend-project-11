@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap";
 import * as yup from "yup";
 import initView from "./view.js";
-import initI18n from "./locales/initI18n.js";
+import initI18n from "./locales/index.js";
 import i18next from "i18next";
 
 const runApp = async () => {
@@ -22,7 +22,7 @@ const runApp = async () => {
 
   const state = {
     form: {
-      status: "idle", // 'valid' 'invalid'
+      status: "idle",
       error: null,
     },
     urls: [],

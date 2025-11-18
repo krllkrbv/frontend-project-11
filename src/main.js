@@ -53,11 +53,23 @@ const runApp = async () => {
         watchedState.urls.push(url);
         input.value = "";
         input.focus();
+
+		alert(i18next.t('errors.success'));
       })
       .catch((err) => {
         console.log(err.message);
         watchedState.form.status = "invalid";
         watchedState.form.error = err.message;
+
+		if (err.message.includes('already')) {
+          alert(i18next.t('errors.notOneOf'));
+        } else if (err.message.includes('valid URL')) {
+          alert(i18next.t('errors.invalidUrl'));
+        } else if (err.message.includes('RSS')) {
+          alert(i18next.t('errors.noValidRss'));
+        } else {
+          alert(i18next.t('errors.unknown'));
+        }
       });
   });
 };

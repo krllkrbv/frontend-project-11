@@ -65,7 +65,7 @@ const runApp = async () => {
           alert(i18next.t('errors.notOneOf'));
         } else if (err.message.includes('valid URL')) {
           alert(i18next.t('errors.invalidUrl'));
-        } else if (err.message === 'invalidRss') {
+        } else if (err.message.includes(noValidRSS)) {
           alert(i18next.t('errors.noValidRss'));
         } else {
           alert(i18next.t('errors.unknown'));

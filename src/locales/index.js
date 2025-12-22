@@ -1,4 +1,4 @@
-import ru from './ru/translation.json'
+import ru from './ru.js'
 
 export default {
   ru: { translation: ru },

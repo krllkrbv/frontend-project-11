@@ -1,9 +1,9 @@
 export default {
   translation: {
-    success: 'RSS успешно загружен',
+    rssLoaded: 'RSS успешно загружен',
     errors: {
       invalidUrl: 'Ссылка должна быть валидным URL',
-      notOneOf: 'RSS уже существует',
+      rssExists: 'RSS уже существует',
 	  empty: 'Не должно быть пустым',
 	  noValidRss: 'Ресурс не содержит валидный RSS',
 	  invalidRss: 'Ресурс не содержит валидный RSS',

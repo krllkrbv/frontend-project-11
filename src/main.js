@@ -19,10 +19,8 @@ const updatePosts = (watchedState, i18n) => {
     return axios.get(url)
       .then((response) => {
         const { posts } = parse(response.data.contents)
-
         const existingLinks = watchedState.posts.map(post => post.link)
         const newPosts = posts.filter(post => !existingLinks.includes(post.link))
-
         if (newPosts.length > 0) {
           const newPostsWithIds = newPosts.map(post => ({
             ...post,
@@ -41,145 +39,140 @@ const updatePosts = (watchedState, i18n) => {
   })
 }
 
-export default () => {
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      initApp()
-    })
-  }
-  else {
-    initApp()
+const startApp = () => {
+  console.log('Запуск initApp');
+
+  const elements = {
+    form: document.querySelector('#rss-form'),
+    input: document.querySelector('#url-input'),
+    submit: document.querySelector('button[type="submit"]'),
+    feedback: document.querySelector('.feedback'),
+    successMessage: document.querySelector('.success-message'),
+    feedsList: document.querySelector('.feeds'),
+    postsList: document.querySelector('.posts'),
   }
 
-  function initApp() {
-    const elements = {
-      form: document.querySelector('#rss-form'),
-      input: document.querySelector('#url-input'),
-      submit: document.querySelector('button[type="submit"]'),
-      feedback: document.querySelector('.feedback'),
-      successMessage: document.querySelector('.success-message'),
-      feedsList: document.querySelector('.feeds'),
-      postsList: document.querySelector('.posts'),
+  if (!elements.form || !elements.input || !elements.submit || !elements.feedback || !elements.feedsList || !elements.postsList) {
+    console.error('Некоторые элементы не найдены:', elements)
+    return
+  }
+
+  const state = {
+    feeds: [],
+    posts: [],
+    readPosts: new Set(),
+    form: {
+      status: 'filling',
+      error: null,
+    },
+  }
+
+  const i18n = i18next.createInstance()
+  i18n.init({
+    lng: 'ru',
+    resources,
+  })
+
+  const watchedState = onChange(state, () => {
+    try {
+      initView(state, elements, i18n)
+    } catch (error) {
+      console.error('Ошибка при обновлении вида:', error)
     }
+  })
 
-    if (!elements.form || !elements.input || !elements.submit || !elements.feedback || !elements.feedsList || !elements.postsList) {
-      console.error('Some elements not found:', elements)
+  initView(state, elements, i18n)
+
+  elements.form.addEventListener('submit', (e) => {
+    e.preventDefault()
+    const formData = new FormData(e.target)
+    const url = formData.get('url').trim()
+
+    const validation = validateUrl()({ url })
+    if (!validation.isValid) {
+      watchedState.form.status = 'error'
+      watchedState.form.error = validation.error
       return
     }
 
-    const state = {
-      feeds: [],
-      posts: [],
-      readPosts: new Set(),
-      form: {
-        status: 'filling',
-        error: null,
-      },
+    watchedState.form.status = 'sending'
+    watchedState.form.error = null
+
+    if (watchedState.feeds.some(feed => feed.url === url)) {
+      watchedState.form.status = 'error'
+      watchedState.form.error = 'rssExists'
+      return
     }
 
-    const i18n = i18next.createInstance()
-    i18n.init({
-      lng: 'ru',
-      resources,
-    })
-
-    const watchedState = onChange(state, () => {
-      try {
-        initView(state, elements, i18n)
-      }
-      catch (error) {
-        console.error('View update error:', error)
-      }
-    })
-
-    initView(state, elements, i18n)
-
-    elements.form.addEventListener('submit', (e) => {
-      e.preventDefault()
-      const formData = new FormData(e.target)
-      const url = formData.get('url').trim()
-
-      const validation = validateUrl()({ url })
-      if (!validation.isValid) {
-        watchedState.form.status = 'error'
-        watchedState.form.error = validation.error
-        return
-      }
-
-      watchedState.form.status = 'sending'
-      watchedState.form.error = null
-
-      if (watchedState.feeds.some(feed => feed.url === url)) {
-        watchedState.form.status = 'error'
-        watchedState.form.error = 'rssExists'
-        return
-      }
-
-      axios.get(getProxiedUrl(url))
-        .then((response) => {
-          let feedData
-          let postsData
-          try {
-            const parsed = parse(response.data.contents)
-            feedData = parsed.feed
-            postsData = parsed.posts
-          }
-          catch (error) {
-            console.error('Parse error:', error)
-            watchedState.form.status = 'error'
-            watchedState.form.error = 'invalidRss'
-            return
-          }
-
-          feedData.url = url
-          feedData.id = _.uniqueId('feed_')
-
-          const postsWithId = postsData.map(post => ({
-            ...post,
-            id: _.uniqueId('post_'),
-            feedId: feedData.id,
-          }))
-
-          watchedState.feeds.unshift(feedData)
-          watchedState.posts.unshift(...postsWithId)
-          watchedState.form.status = 'success'
-
-          updatePosts(watchedState, i18n)
-        })
-        .catch((error) => {
-          console.error('Network error:', error)
+    axios.get(getProxiedUrl(url))
+      .then((response) => {
+        let feedData
+        let postsData
+        try {
+          const parsed = parse(response.data.contents)
+          feedData = parsed.feed
+          postsData = parsed.posts
+        } catch (error) {
+          console.error('Ошибка парсинга:', error)
           watchedState.form.status = 'error'
-          watchedState.form.error = 'networkError'
-        })
-    })
+          watchedState.form.error = 'invalidRss'
+          return
+        }
 
-    elements.postsList.addEventListener('click', (e) => {
-      if (e.target.tagName === 'BUTTON') {
-        const postId = e.target.dataset.id
-        if (!postId) return
+        feedData.url = url
+        feedData.id = _.uniqueId('feed_')
 
-        const post = state.posts.find(p => p.id === postId)
-        if (!post) return
+        const postsWithId = postsData.map(post => ({
+          ...post,
+          id: _.uniqueId('post_'),
+          feedId: feedData.id,
+        }))
 
-        watchedState.readPosts.add(postId)
-        watchedState.posts = [...watchedState.posts]
+        watchedState.feeds.unshift(feedData)
+        watchedState.posts.unshift(...postsWithId)
+        watchedState.form.status = 'success'
 
-        const modalLabel = document.getElementById('modalLabel')
-        const modalBody = document.querySelector('.modal-body')
-        const modalLink = document.getElementById('modalLink')
+        updatePosts(watchedState, i18n)
+      })
+      .catch((error) => {
+        console.error('Ошибка сети:', error)
+        watchedState.form.status = 'error'
+        watchedState.form.error = 'networkError'
+      })
+  })
 
-        if (modalLabel && modalBody && modalLink) {
-          modalLabel.textContent = post.title
-          modalBody.textContent = post.description
-          modalLink.href = post.link
+  elements.postsList.addEventListener('click', (e) => {
+    if (e.target.tagName === 'BUTTON') {
+      const postId = e.target.dataset.id
+      if (!postId) return
 
-          const modalElement = document.getElementById('modal')
-          if (modalElement) {
-            const modal = new window.bootstrap.Modal(modalElement)
-            modal.show()
-          }
+      const post = state.posts.find(p => p.id === postId)
+      if (!post) return
+
+      watchedState.readPosts.add(postId)
+      watchedState.posts = [...watchedState.posts]
+
+      const modalLabel = document.getElementById('modalLabel')
+      const modalBody = document.querySelector('.modal-body')
+      const modalLink = document.getElementById('modalLink')
+
+      if (modalLabel && modalBody && modalLink) {
+        modalLabel.textContent = post.title
+        modalBody.textContent = post.description
+        modalLink.href = post.link
+
+        const modalElement = document.getElementById('modal')
+        if (modalElement) {
+          const modal = new window.bootstrap.Modal(modalElement)
+          modal.show()
         }
       }
-    })
-  }
+    }
+  })
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', startApp);
+} else {
+  startApp();
 }

@@ -53,7 +53,7 @@ export default () => {
 
   function initApp() {
     const elements = {
-      form: document.querySelector('.rss-form'),
+      form: document.querySelector('#rss-form'),
       input: document.querySelector('#url-input'),
       submit: document.querySelector('button[type="submit"]'),
       feedback: document.querySelector('.feedback'),

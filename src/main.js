@@ -154,9 +154,7 @@ export default () => {
     })
 
     elements.postsList.addEventListener('click', (e) => {
-	  console.log('Клик по:', e.target);
       if (e.target.tagName === 'BUTTON') {
-		console.log('Клик по кнопке с id:', e.target.dataset.id);
         const postId = e.target.dataset.id
         if (!postId) return
 

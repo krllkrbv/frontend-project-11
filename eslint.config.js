@@ -7,18 +7,18 @@ module.exports = [
     ignores: ['node_modules/**', 'dist/**'],
   },
   {
-    files: ['**/*.{js,mjs,cjs}'],
-    languageOptions: {
-      globals: {
-        ...globals.browser,
-      },
-    },
-  },
-  {
     files: ['webpack.config.js', 'postcss.config.js', 'eslint.config.js'],
     languageOptions: {
       globals: {
         ...globals.node,
+      },
+    },
+  },
+  {
+    files: ['src/**/*.{js,mjs,cjs}'],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
       },
     },
   },

@@ -8,4 +8,4 @@ export default {
   unknown: 'Неизвестная ошибка',
   view: 'Просмотр',
   networkError: 'Ошибка сети',
-};
+}

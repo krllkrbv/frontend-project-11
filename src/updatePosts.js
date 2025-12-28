@@ -40,4 +40,4 @@ const updatePosts = (state, elements, i18n) => {
     })
 }
 
-export default updatePosts;
+export default updatePosts

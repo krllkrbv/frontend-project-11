@@ -57,15 +57,45 @@ export default () => {
       input: document.querySelector('#url-input'),
       submit: document.querySelector('button[type="submit"]'),
       feedback: document.querySelector('.feedback'),
-      successMessage: document.querySelector('.success-message'),
-      feedsList: document.querySelector('.feeds'),
-      postsList: document.querySelector('.posts'),
+      feedsContainer: document.querySelector('#feeds-container'),
+      postsContainer: document.querySelector('#posts-container'),
     }
 
-    if (!elements.form || !elements.input || !elements.submit || !elements.feedback || !elements.feedsList || !elements.postsList) {
+    if (!elements.form || !elements.input || !elements.submit || !elements.feedback || !elements.feedsContainer || !elements.postsContainer) {
       console.error('Some elements not found:', elements)
       return
     }
+
+    const feedsCard = document.createElement('div')
+    feedsCard.classList.add('card', 'border-0')
+    const feedsCardBody = document.createElement('div')
+    feedsCardBody.classList.add('card-body')
+    const feedsTitle = document.createElement('h2')
+    feedsTitle.classList.add('card-title', 'h4')
+    feedsTitle.textContent = 'Фиды'
+    feedsCardBody.append(feedsTitle)
+    feedsCard.append(feedsCardBody)
+    const feedsList = document.createElement('ul')
+    feedsList.classList.add('list-group', 'border-0', 'rounded-0')
+    feedsCard.append(feedsList)
+    elements.feedsContainer.append(feedsCard)
+
+    const postsCard = document.createElement('div')
+    postsCard.classList.add('card', 'border-0')
+    const postsCardBody = document.createElement('div')
+    postsCardBody.classList.add('card-body')
+    const postsTitle = document.createElement('h2')
+    postsTitle.classList.add('card-title', 'h4')
+    postsTitle.textContent = 'Посты'
+    postsCardBody.append(postsTitle)
+    postsCard.append(postsCardBody)
+    const postsList = document.createElement('ul')
+    postsList.classList.add('list-group', 'border-0', 'rounded-0')
+    postsCard.append(postsList)
+    elements.postsContainer.append(postsCard)
+
+    elements.feedsList = feedsList
+    elements.postsList = postsList
 
     const state = {
       feeds: [],
@@ -143,6 +173,7 @@ export default () => {
           watchedState.feeds.unshift(feedData)
           watchedState.posts.unshift(...postsWithId)
           watchedState.form.status = 'success'
+          watchedState.form.error = null
 
           updatePosts(watchedState, i18n)
         })

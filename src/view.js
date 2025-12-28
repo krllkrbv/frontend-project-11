@@ -9,7 +9,7 @@ export default (state, elements, i18n) => {
 
   // Сброс классов и текста
   input.classList.remove('is-invalid')
-  feedback.classList.remove('invalid-feedback', 'text-success')
+  feedback.classList.remove('text-danger', 'text-success')
   feedback.textContent = ''
 
   // Блокировка кнопки при отправке
@@ -20,7 +20,7 @@ export default (state, elements, i18n) => {
     input.classList.add('is-invalid')
     const errorText = state.form.error ? i18n.t(state.form.error) : 'Unknown error'
     feedback.textContent = errorText
-    feedback.classList.add('invalid-feedback')
+    feedback.classList.add('text-danger')
   }
 
   // Успех

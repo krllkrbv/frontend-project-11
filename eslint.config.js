@@ -6,21 +6,28 @@ export default [
   js.configs.recommended,
 
   {
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
+
+  {
+    files: ['src/**/*.js'],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+      },
+    },
+  },
+
+  {
     plugins: {
       '@stylistic': stylistic,
     },
     rules: {
       '@stylistic/semi': ['error', 'never'],
-    },
-  },
-
-  {
-    files: ['**/*.config.js'],
-    languageOptions: {
-      sourceType: 'commonjs',
-      globals: {
-        ...globals.node,
-      },
     },
   },
 

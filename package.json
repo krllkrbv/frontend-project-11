@@ -19,6 +19,7 @@
   "homepage": "https://github.com/krllkrbv/frontend-project-11#readme",
   "devDependencies": {
     "@eslint/js": "^9.32.0",
+    "@stylistic/eslint-plugin": "^5.6.1",
     "autoprefixer": "^10.4.21",
     "css-loader": "^7.1.2",
     "eslint": "^8.57.1",

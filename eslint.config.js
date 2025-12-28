@@ -4,7 +4,7 @@ const globals = require('globals')
 module.exports = [
   js.configs.recommended,
   {
-    ignores: ['eslint.config.js', 'node_modules/**', 'dist/**'],
+    ignores: ['node_modules/**', 'dist/**'],
   },
   {
     files: ['**/*.{js,mjs,cjs}'],
@@ -15,7 +15,7 @@ module.exports = [
     },
   },
   {
-    files: ['webpack.config.js', 'postcss.config.js'],
+    files: ['webpack.config.js', 'postcss.config.js', 'eslint.config.js'],
     languageOptions: {
       globals: {
         ...globals.node,

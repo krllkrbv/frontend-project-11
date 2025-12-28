@@ -1,21 +1,21 @@
-import globals from 'globals';
+import globals from 'globals'
 
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { FlatCompat } from '@eslint/eslintrc';
-import pluginJs from '@eslint/js';
-import importPlugin from 'eslint-plugin-import';
+import path from 'path'
+import { fileURLToPath } from 'url'
+import { FlatCompat } from '@eslint/eslintrc'
+import pluginJs from '@eslint/js'
+import importPlugin from 'eslint-plugin-import'
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 const compat = new FlatCompat({
   baseDirectory: __dirname,
   recommendedConfig: pluginJs.configs.recommended,
-});
+})
 
 export default [
   {
-    ignores: ['dist/'],
+    ignores: ['dist/', 'eslint.config.js'],
   },
   {
     languageOptions: {
@@ -49,6 +49,7 @@ export default [
       'no-console': 'off',
       'import/no-extraneous-dependencies': 'off',
       semi: 'off',
+      '@stylistic/semi': 'off',
       'linebreak-style': 'off',
       'import/no-unresolved': 'off',
       'import/order': 'off',
@@ -62,4 +63,13 @@ export default [
       'no-param-reassign': 'off',
     },
   },
-];
+  {
+    files: ['*.config.js'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+      sourceType: 'commonjs',
+    },
+  },
+]

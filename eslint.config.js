@@ -1,17 +1,8 @@
-import globals from 'globals'
 import js from '@eslint/js'
-import stylistic from '@stylistic/eslint-plugin'
+import globals from 'globals'
 
 export default [
   js.configs.recommended,
-
-  {
-    languageOptions: {
-      globals: {
-        ...globals.node,
-      },
-    },
-  },
 
   {
     files: ['src/**/*.js'],
@@ -23,11 +14,16 @@ export default [
   },
 
   {
-    plugins: {
-      '@stylistic': stylistic,
-    },
-    rules: {
-      '@stylistic/semi': ['error', 'never'],
+    files: [
+      '**/webpack.config.js',
+      '**/postcss.config.js',
+      '**/eslint.config.js',
+    ],
+    languageOptions: {
+      sourceType: 'commonjs',
+      globals: {
+        ...globals.node,
+      },
     },
   },
 

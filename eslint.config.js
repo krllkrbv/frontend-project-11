@@ -47,7 +47,7 @@ export default [
       'import/no-named-as-default-member': 'off',
       'no-console': 'off',
       'import/no-extraneous-dependencies': 'off',
-      semi: 'off',
+      'semi': 'off',
       '@stylistic/semi': 'off',
       'linebreak-style': 'off',
       'import/no-unresolved': 'off',

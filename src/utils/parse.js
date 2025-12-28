@@ -39,4 +39,4 @@ export default (xmlString) => {
   }
 
   return { feed, posts }
-}
+};

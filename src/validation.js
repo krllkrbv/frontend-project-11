@@ -14,4 +14,4 @@ export default () => {
       return { isValid: false, error: 'invalidUrl' }
     }
   }
-}
+};

@@ -16,9 +16,9 @@ export default [
 
   {
     files: [
-      'eslint.config.js',
-      'webpack.config.js',
-      'postcss.config.js',
+      '**/postcss.config.js',
+      '**/webpack.config.js',
+      '**/eslint.config.js',
     ],
     languageOptions: {
       sourceType: 'commonjs',
